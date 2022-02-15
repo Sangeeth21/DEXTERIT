@@ -1,148 +1,120 @@
-#include <stdio.h>
- 
-int current[5][5], maximum_claim[5][5], available[5];
-int allocation[5] = {0, 0, 0, 0, 0};
-int maxres[5], running[5], safe = 0;
-int counter = 0, i, j, exec, resources, processes, k = 1;
- 
-int main()
+#include<stdio.h>
+void main()
 {
-printf("\nEnter number of processes: ");
-     scanf("%d", &processes);
- 
-     for (i = 0; i < processes; i++)
-{
-         running[i] = 1;
-         counter++;
-     }
- 
-     printf("\nEnter number of resources: ");
-     scanf("%d", &resources);
- 
-     printf("\nEnter Claim Vector:");
-     for (i = 0; i < resources; i++)
-{
-        scanf("%d", &maxres[i]);
-     }
- 
-   printf("\nEnter Allocated Resource Table:\n");
-     for (i = 0; i < processes; i++)
-{
-        for(j = 0; j < resources; j++)
-{
-   scanf("%d", &current[i][j]);
-         }
-     }
- 
-     printf("\nEnter Maximum Claim Table:\n");
-     for (i = 0; i < processes; i++)
-{
-         for(j = 0; j < resources; j++)
-{
-             scanf("%d", &maximum_claim[i][j]);
-         }
-     }
- 
-printf("\nThe Claim Vector is: ");
-     for (i = 0; i < resources; i++)
-{
-        printf("\t%d", maxres[i]);
-}
- 
-     printf("\nThe Allocated Resource Table:\n");
-     for (i = 0; i < processes; i++)
-{
-        for (j = 0; j < resources; j++)
-{
-             printf("\t%d", current[i][j]);
-         }
-printf("\n");
-     }
- 
-     printf("\nThe Maximum Claim Table:\n");
-     for (i = 0; i < processes; i++)
-{
-         for (j = 0; j < resources; j++)
-{
-        printf("\t%d", maximum_claim[i][j]);
-         }
-         printf("\n");
-     }
- 
-     for (i = 0; i < processes; i++)
-{
-         for (j = 0; j < resources; j++)
-{
-             allocation[j] += current[i][j];
-         }
-     }
- 
-     printf("\nAllocated resources:");
-     for (i = 0; i < resources; i++)
-{
-         printf("\t%d", allocation[i]);
-     }
- 
-     for (i = 0; i < resources; i++)
-{
-        available[i] = maxres[i] - allocation[i];
-}
- 
-     printf("\nAvailable resources:");
-     for (i = 0; i < resources; i++)
-{
-         printf("\t%d", available[i]);
-     }
-     printf("\n");
- 
-     while (counter != 0)
-{
-         safe = 0;
-         for (i = 0; i < processes; i++)
-{
-             if (running[i])
-{
-                 exec = 1;
-                 for (j = 0; j < resources; j++)
-{
-                     if (maximum_claim[i][j] - current[i][j] > available[j])
-{
-                         exec = 0;
-                         break;
-                     }
-                 }
-                 if (exec)
-{
-                     printf("\nProcess%d is executing\n", i + 1);
-                     running[i] = 0;
-                     counter--;
-                     safe = 1;
- 
-                     for (j = 0; j < resources; j++)
-{
-                         available[j] += current[i][j];
-                     }
-                break;
-                 }
-             }
-         }
-         if (!safe)
-{
-             printf("\nThe processes are in unsafe state.\n");
-             break;
-         }
-else
-{
-             printf("\nThe process is in safe state");
-             printf("\nAvailable vector:");
- 
-             for (i = 0; i < resources; i++)
-{
-                 printf("\t%d", available[i]);
-             }
- 
-        printf("\n");
-         }
-     }
-     return 0;
+    int n,m,i,j,k,y,alloc[20][20],max[20][20],avail[50],ind=0;
+    printf("Enter the number of process :\n");
+    scanf("%d",&n);
+    printf("Enter the no of process resources :\n");
+    scanf("%d",&m);
+    printf("Enter the allocation matrix :\n");
+    for(i=0;i<n;i++)
+    {
+        for(j=0;j<m;j++)
+        {
+            scanf("%d",&alloc[i][j]);
+        }
+    }
+    printf("Enter the max matrix :\n");
+    for(i=0;i<n;i++)
+    {
+        for(j=0;j<m;j++)
+        {
+            scanf("%d",&max[i][j]);
+        }
+    }
+    printf("Enter the available matrix :\n");
+    for(i=0;i<m;i++)
+    {
+        scanf("%d",&avail[i]);
+    }
+    int finish[n],safesequence[n],work[m],need[n][m];
+    for(i=0;i<m;i++)
+    {
+        work[i]=avail[i];
+    }
+    for(i=0;i<n;i++)
+    {
+        finish[i]=0;
+    }
+    //calculating NEED matrix
+    for(i=0;i<n;i++)
+    {
+        for(j=0;j<m;j++)
+        {
+            need[i][j]=max[i][j]-alloc[i][j];
+        }
+    }
+        printf("NEED matrix is ");
+        for(i=0;i<n;i++)
+        {
+            printf("\n");
+            for(j=0;j<m;j++)
+            {
+                printf("%d",need[i][j]);
+                printf("\t");
+            }
+        }
+        for(i=0;i<m;i++)
+        {
+            work[i]=avail[i];
+        }
+        for(i=0;i<n;i++)
+        {
+            finish[i]=0;
+        }
+        for(k=0;k<n;k++)
+        {
+            for(i=0;i<n;i++)
+            {
+                if(finish[i]==0)
+                {
+                    int flag=0;
+                    for(j=0;j<m;j++)
+                    {
+                        if(need[i][j]>work[j])
+                        {
+                            flag=1;
+                            break;
+                        }
+                    }
+                    if(flag==0)
+                    {
+                        safesequence[ind++]=i;
+                        for(y=0;y<m;y++)
+                        {
+                            work[y]+=alloc[i][y];
+                        }
+                        finish[i]=1;
+                    }
+                }
+            }
+        }
+    
+    printf("\n table \n");
+    printf("pid\t\t\tallo\t\t\tmax\t\t\tneed\n");
+    for(i=0;i<n;i++)
+    {
+        printf("\n%d",i);
+        printf("|");
+        for(j=0;j<m;j++)
+        {
+            printf("\t%d",alloc[i][j]);
+        }
+        printf("|");
+        for(j=0;j<m;j++)
+        {
+            printf("\t%d",max[i][j]);
+        }
+        printf("|");
+        for(j=0;j<m;j++)
+        {
+            printf("\t%d",need[i][j]);
+        }
+    }
+    printf("\nfollowing is the SAFE sequence \n");
+    for(i=0;i<n;i++)
+    {
+        printf("P%d",safesequence[i]);
+        printf("\t");
+    }
 }
